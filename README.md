@@ -3,10 +3,10 @@ PDBXtra and Josico presents: Animating Quantum Mechanics Molecules... now in Ble
 
 Architecture:
 
-A. Build initial structure
+    A. Build initial structure
 
-    A1. Build balls 
+        A1. Build balls 
 
-    A2. Connect balls 
+        A2. Connect balls 
   
 B. Geometry optimization
