@@ -4,14 +4,13 @@ This repository provides a script to create, optimize, and animate molecular str
 
 Usage
 A. Build Initial Non-Optimized Structure
-A1. Creates the Balls for All Atom Positions
-
+    
+    A1. Creates the Balls for All Atom Positions
     Load the molecule from an XYZ file using ASE.
     Create a dictionary to map each atom to a Blender object (ball).
     Scale the balls based on predefined atom sizes.
-
-A2. Create Bonds with Cylinders
-
+    
+    A2. Create Bonds with Cylinders
     Generate possible bonds between atoms.
     Create cylinders to represent bonds and set their positions.
 
@@ -20,30 +19,25 @@ B. Add Axis to Move the Whole Molecule
     Add a mover object to allow moving the entire molecule within the Blender scene.
 
 C. Color and Smooth the Balls
-C1. Color
-
+    
+    C1. Color
     Assign colors to atoms based on their element type.
 
 C2. Smooth the Objects
-
+ 
     Smooth the balls and bonds in the Blender scene.
-
 D. Geometry Optimization
-D1. Do the Optimization
-
-    Perform molecular geometry optimization using TorchANI and ASE.
-
-D2. Do the Animation
-
+    
+    D1. Do the Optimization
+    Perform molecular geometry optimization using TorchANI and ASE.    
+    D2. Do the Animation
     Animate the optimized molecule by updating atom positions over the frames.
 
 E. Frequency Calculation
-E1. Do the Frequency Calculation
-
+    
+    E1. Do the Frequency Calculation
     Calculate vibrational frequencies using TorchANI.
-
-E2. Animate the Frequencies
-
+    E2. Animate the Frequencies
     Animate the molecule to visualize the vibrational modes.
 
 TODO
