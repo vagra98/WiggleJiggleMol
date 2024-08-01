@@ -61,7 +61,7 @@ def cylinder_between(x1, y1, z1, x2, y2, z2, r):
     )
     return cylinder, dist
 
-def cylinder_follow(molecule, all_bonds, total_opt_steps, long_size, pt_dic, atoms_dic):
+def cylinder_follow_c(molecule, all_bonds, total_opt_steps, long_size, pt_dic, atoms_dic):
     j = -1
     for bond in all_bonds:
         j += 1
@@ -71,9 +71,12 @@ def cylinder_follow(molecule, all_bonds, total_opt_steps, long_size, pt_dic, ato
         cylinder_name = "bond_" + str(atomA) + "_" + str(atomB)
         for i in range(1, total_opt_steps):
             bpy.context.scene.frame_set(i)
-            dx = atoms_dic[atom_nameB].location[0] - atoms_dic[atom_nameA].location[0]
-            dy = atoms_dic[atom_nameB].location[1] - atoms_dic[atom_nameA].location[1]
-            dz = atoms_dic[atom_nameB].location[2] - atoms_dic[atom_nameA].location[2]
+            half_dist_x = (atoms_dic[atom_nameB].location[0] + atoms_dic[atom_nameA].location[0]) / 2
+            half_dist_y = (atoms_dic[atom_nameB].location[1] + atoms_dic[atom_nameA].location[1]) / 2
+            half_dist_z = (atoms_dic[atom_nameB].location[2] + atoms_dic[atom_nameA].location[2]) / 2
+            dx = half_dist_x - atoms_dic[atom_nameA].location[0]
+            dy = half_dist_y - atoms_dic[atom_nameA].location[1]
+            dz = half_dist_z - atoms_dic[atom_nameA].location[2]
             dist = np.sqrt(dx**2 + dy**2 + dz**2)
             scaling_long = dist / long_size[j]
             cyl03 = bpy.data.objects[cylinder_name]
@@ -92,6 +95,7 @@ def cylinder_follow(molecule, all_bonds, total_opt_steps, long_size, pt_dic, ato
             else:
                 cyl03.scale = (1.0, 1.0, scaling_long)
                 cyl03.keyframe_insert("scale", frame=i)
+        cylinder_name = "bond_" + str(atomA) + "_" + str(atomB)
     return
 
 def add_mover():

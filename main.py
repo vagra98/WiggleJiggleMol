@@ -16,13 +16,11 @@ if not functions_dir in sys.path:
 #import functions
 from functions import *
 
-
-#comentario lol
-
 #constants (maybe TODO: add constants in another file and call it)
 #TODO add scaling for all periodic table
 atom_size_dict = {'H':0.2,'C':0.25,'O':0.4,'N':0.3}
 #TODO add distances for making the bond appear or dissappear in function of the length
+#TODO change to half distances values for the colored bonds
 pt_dict = {
     'C': {'C': {'bond': 1.7}, 'H': {'bond': 1.2}, 'N': {'bond': 1.60}, 'O': {'bond': 1.42}},
     'H': {'C': {'bond': 1.2}, 'H': {'bond': 0.80}, 'N': {'bond': 1.1}, 'O': {'bond': 1.1}},
@@ -60,6 +58,7 @@ xyz_path = "C:\\Users\\redbr\\Desktop\\blender_devving\\github\\water.xyz.txt"
 molecule = ase.io.read(xyz_path, format='xyz')      #load molecule in ase
 atom_symbol = molecule.get_chemical_symbols()       #atom_symbol gets every chemical element in the molecule
 number_of_atoms = len(atom_symbol)                  #number of atoms in the molecule
+atomnum_atomsymb = {num: symb for num, symb in enumerate(atom_symbol)}
 
 #A1. Creates the ballzzz for all atom positions; same size for all
 #atomnum_bpyobj_dict is {atom_1}:{bpy object ball for atom 1}
@@ -79,27 +78,31 @@ for key, value in bpyobj_atomscale_dict.items():
 atom_scaling(bpyobj_atomscale_dict)
 
 #A2. Create bonds with cylinders
-
+##
 #empty list of all the possible bonds
 #TODO implement a cut-off, all bonds for 100 atoms molecule is shitty coding
 all_bonds = []
 
 #might be done with itertools library in order to avoid double loop
 for elementA in range(number_of_atoms):
-    for elementB in range(elementA + 1, number_of_atoms):
-        all_bonds.append((elementA, elementB))
+    for elementB in range(number_of_atoms):
+        if (elementA != elementB):
+            all_bonds.append((elementA, elementB))
 
 #empty list of all bonds lengths
 long_size = np.array([])
+#empty dictionary for the atom originating bond
+bond_bpyobj_atomnum_dict = {}
 
 #put cylinder for each bond
 for index, bond in enumerate(all_bonds):
     #
     #atomA and atomB are the labels of the atoms to be bonded, they come from the tuple
     atomA, atomB = bond
+    half_bond =  (molecule.get_positions()[atomA] + molecule.get_positions()[atomB]) / 2
     cylinder, long_size_val = cylinder_between(
         molecule.get_positions()[atomA][0], molecule.get_positions()[atomA][1], molecule.get_positions()[atomA][2],
-        molecule.get_positions()[atomB][0], molecule.get_positions()[atomB][1], molecule.get_positions()[atomB][2], 
+        half_bond[0], half_bond[1], half_bond[2],
         0.1 )
     long_size = np.append(long_size, long_size_val)
     #TODO check if blender is in object mode already
@@ -107,8 +110,10 @@ for index, bond in enumerate(all_bonds):
     #selects the bpy object and names it 
     cylinder = bpy.context.active_object
     cylinder.name = "bond_" + str(atomA) + "_" + str(atomB)
+    bond_bpyobj_atomnum_dict[cylinder] = str(atomA) 
 
-
+#each bond bpy object has the atom symbol for coloring, {bond bpy obj} : {H}
+bond_bpyobj_atomsymb_dict = {key: atom_symbol[int(value)] for key, value in bond_bpyobj_atomnum_dict.items()}
 
 #B. Add the axis to move the whole molecule within the Blender scene
 #TODO generalize "mover" name
@@ -118,8 +123,20 @@ if mover.name == "mover1":
 
 #C. Color and smooth the balllzzz in Blender scene 
 #TODO big: add two cylinders instead of one and color them properly
-#C1. Color 
+#C1. Color atoms and bonds
+
+#color atoms
 for object, element in bpyobj_atomsymb_dict.items():
+    if element in element_colors:
+        color_name = element_colors[element]
+        if color_name in material_colors:
+            material = material_colors[color_name]
+            object.select_set(True)
+            object.data.materials.append(material)
+            object.select_set(False)
+
+#color bonds
+for object, element in bond_bpyobj_atomsymb_dict.items():
     if element in element_colors:
         color_name = element_colors[element]
         if color_name in material_colors:
@@ -174,9 +191,8 @@ for obj in bpy.data.objects:
         obj.select_set(True)
 bpy.ops.nla.bake(frame_start=1, frame_end=total_opt_steps, bake_types={'OBJECT'})
 
-
 #follow balllzzz with the cylinders
-cylinder_follow(molecule, all_bonds, total_opt_steps, long_size, pt_dict, atomnum_bpyobj_dict)
+#cylinder_follow_c(molecule, all_bonds, total_opt_steps, long_size, pt_dict, atomnum_bpyobj_dict)
 
 finish_optimization_structure = time.time()
 print("A. The total time optimize the structure is:")
@@ -258,3 +274,6 @@ for freq_type in range(freq_count):  # change to how many frequencies and which 
 finish_frequency = time.time()
 print("A. The total time to get frequencies is:")
 print(finish_frequency - start_frequency)
+
+
+cylinder_follow_c(molecule, all_bonds, last_frame_freq_type, long_size, pt_dict, atomnum_bpyobj_dict)
