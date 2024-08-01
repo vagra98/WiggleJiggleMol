@@ -16,6 +16,9 @@ if not functions_dir in sys.path:
 #import functions
 from functions import *
 
+
+#comentario lol
+
 #constants (maybe TODO: add constants in another file and call it)
 #TODO add scaling for all periodic table
 atom_size_dict = {'H':0.2,'C':0.25,'O':0.4,'N':0.3}
