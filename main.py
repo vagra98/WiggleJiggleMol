@@ -279,4 +279,4 @@ print("A. The total time to get frequencies is:")
 print(finish_frequency - start_frequency)
 
 
-cylinder_follow_c(molecule, all_bonds, last_frame_freq_type, long_size, pt_dict, atomnum_bpyobj_dict)
+cylinder_follow(molecule, all_bonds, last_frame_freq_type, long_size, pt_dict, atomnum_bpyobj_dict)

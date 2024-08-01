@@ -61,7 +61,7 @@ def cylinder_between(x1, y1, z1, x2, y2, z2, r):
     )
     return cylinder, dist
 
-def cylinder_follow_c(molecule, all_bonds, total_opt_steps, long_size, pt_dic, atoms_dic):
+def cylinder_follow(molecule, all_bonds, total_opt_steps, long_size, pt_dic, atoms_dic):
     j = -1
     for bond in all_bonds:
         j += 1
