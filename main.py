@@ -1,6 +1,3 @@
-#
-# hola valentin
-# 
 import os
 import sys
 import time
