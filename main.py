@@ -8,6 +8,8 @@ import torch
 import torchani
 
 #import new directory to blender path
+print("current dir:")
+print(os.getcwd())
 #TODO generalize the directory for the pip installation
 functions_dir = "C:\\Users\\redbr\\Desktop\\blender_devving\\github\\"
 if not functions_dir in sys.path:
